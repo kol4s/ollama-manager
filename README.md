@@ -4,6 +4,34 @@ Ollama Manager is a desktop application built with Python and PySide6 for managi
 
 > Unofficial community project. Not affiliated with or endorsed by Ollama.
 
+
+## Screenshots
+
+### Main interface
+
+![Ollama Manager](screenshots/o.manager1.png)
+
+### Hardware information
+
+![Hardware information](screenshots/o.manager2.png)
+
+### Model management
+
+![Model management](screenshots/o.manager3.png)
+
+### Model configuration
+
+![Model configuration](screenshots/o.manager4.png)
+
+### Runtime monitoring
+
+![Runtime monitoring](screenshots/o.manager5.png)
+
+### Additional monitoring and controls
+
+![Additional monitoring](screenshots/o.manager6.png)
+
+
 ## Features
 
 - CPU, RAM and Swap detection
