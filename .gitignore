@@ -1,0 +1,29 @@
+# Entorno virtual
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# Backups históricos del desarrollo
+_archive/
+
+# Logs y volcados
+*.log
+*.core
+/core.[0-9]*
+
+# IDEs
+.idea/
+.vscode/
+
+# Sistema
+.DS_Store
+
+# Empaquetado
+build/
+dist/
+*.egg-info/

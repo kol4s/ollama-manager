@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "description": "Knowledge base for hardware capability assessment and Ollama recommendations.",
+  "memory": {
+    "units": "bytes",
+    "ram": {
+      "low": 8589934592,
+      "medium": 17179869184,
+      "high": 34359738368,
+      "very_high": 68719476736
+    },
+    "swap": {
+      "avoid_for_model_memory": true
+    }
+  },
+  "gpu": {
+    "memory_types": {
+      "dedicated": {
+        "preferred_for_llm": true,
+        "counts_as_vram": true
+      },
+      "shared": {
+        "preferred_for_llm": false,
+        "counts_as_vram": false
+      }
+    },
+    "compute_api_priority": [
+      "CUDA",
+      "ROCm",
+      "Vulkan",
+      "CPU"
+    ],
+    "capabilities": {
+      "cuda": {
+        "vendor": "NVIDIA",
+        "preferred": true
+      },
+      "rocm": {
+        "vendor": "AMD",
+        "preferred": true
+      },
+      "vulkan": {
+        "preferred": true
+      }
+    }
+  },
+  "model_execution": {
+    "prefer_full_gpu_residency": true,
+    "allow_cpu_offload": true,
+    "cpu_offload_penalty": "high",
+    "swap_offload_penalty": "very_high",
+    "multi_gpu": {
+      "enabled": true,
+      "prefer_single_gpu_when_model_fits": true,
+      "allow_split_when_required": true
+    },
+    "vram_safety_margin": 0.1
+  },
+  "context": {
+    "profiles": {
+      "small": {
+        "max_recommended": 8192
+      },
+      "medium": {
+        "max_recommended": 32768
+      },
+      "large": {
+        "max_recommended": 65536
+      },
+      "very_large": {
+        "max_recommended": 131072
+      },
+      "extreme": {
+        "max_recommended": 262144
+      }
+    },
+    "memory_scaling": {
+      "parallel_requests_multiply_context_memory": true,
+      "reserve_memory_for_runtime": true
+    }
+  },
+  "recommendation": {
+    "principles": [
+      "Prefer dedicated VRAM over shared system memory.",
+      "Prefer GPU execution over CPU execution when sufficient GPU memory exists.",
+      "Avoid swap as model memory.",
+      "Prefer keeping a model entirely on one GPU when it fits.",
+      "Use multi-GPU splitting when necessary and beneficial.",
+      "Account for runtime overhead and KV cache when evaluating context size.",
+      "Never recommend a configuration solely from model parameter count."
+    ]
+  },
+  "ollama_parameters": {
+    "memory": {
+      "num_ctx": {
+        "type": "integer",
+        "description": "Tamaño del contexto utilizado durante la generación.",
+        "affects_memory": true,
+        "runner_option": true,
+        "auto_recommend": true,
+        "minimum": 1
+      },
+      "num_batch": {
+        "type": "integer",
+        "description": "Número de tokens procesados en cada lote de evaluación.",
+        "affects_memory": true,
+        "runner_option": true,
+        "auto_recommend": true,
+        "minimum": 1
+      },
+      "num_gpu": {
+        "type": "integer",
+        "description": "Número de capas que se intentan descargar a GPU; el significado exacto depende del backend.",
+        "affects_memory": true,
+        "runner_option": true,
+        "auto_recommend": true
+      },
+      "main_gpu": {
+        "type": "integer",
+        "description": "GPU principal utilizada por el runner cuando hay varias GPU.",
+        "affects_memory": true,
+        "runner_option": true,
+        "auto_recommend": false
+      },
+      "use_mmap": {
+        "type": "boolean",
+        "description": "Permite mapear el modelo mediante memoria mapeada del sistema.",
+        "affects_memory": true,
+        "runner_option": true,
+        "auto_recommend": false
+      },
+      "num_thread": {
+        "type": "integer",
+        "description": "Número de hilos de CPU utilizados por el runner.",
+        "affects_memory": false,
+        "runner_option": true,
+        "auto_recommend": true,
+        "minimum": 1
+      }
+    },
+    "generation": {
+      "num_keep": {
+        "type": "integer",
+        "description": "Número de tokens iniciales que se mantienen al gestionar el contexto."
+      },
+      "seed": {
+        "type": "integer",
+        "description": "Semilla utilizada para reproducibilidad."
+      },
+      "num_predict": {
+        "type": "integer",
+        "description": "Número máximo de tokens que se generarán.",
+        "minimum": -1
+      },
+      "draft_num_predict": {
+        "type": "integer",
+        "description": "Número máximo de tokens de borrador por paso cuando existe soporte de speculative decoding.",
+        "depends_on_capability": "draft_model"
+      },
+      "top_k": {
+        "type": "integer",
+        "description": "Limita el número de candidatos considerados en cada paso.",
+        "minimum": 0
+      },
+      "top_p": {
+        "type": "number",
+        "description": "Controla la masa acumulada de probabilidad considerada.",
+        "minimum": 0.0,
+        "maximum": 1.0
+      },
+      "min_p": {
+        "type": "number",
+        "description": "Descarta tokens cuya probabilidad relativa sea demasiado baja.",
+        "minimum": 0.0,
+        "maximum": 1.0
+      },
+      "typical_p": {
+        "type": "number",
+        "description": "Controla la selección basada en probabilidad típica.",
+        "minimum": 0.0,
+        "maximum": 1.0
+      },
+      "temperature": {
+        "type": "number",
+        "description": "Controla la aleatoriedad de la generación.",
+        "minimum": 0.0
+      },
+      "repeat_last_n": {
+        "type": "integer",
+        "description": "Número de tokens anteriores utilizados para detectar repeticiones.",
+        "minimum": -1
+      },
+      "repeat_penalty": {
+        "type": "number",
+        "description": "Penalización aplicada a tokens repetidos.",
+        "exclusive_minimum": 0.0
+      },
+      "presence_penalty": {
+        "type": "number",
+        "description": "Penaliza la reutilización de tokens que ya han aparecido."
+      },
+      "frequency_penalty": {
+        "type": "number",
+        "description": "Penaliza tokens en función de la frecuencia con la que aparecen."
+      },
+      "penalize_newline": {
+        "type": "boolean",
+        "description": "Indica si los saltos de línea participan en la penalización por repetición."
+      },
+      "stop": {
+        "type": "string_array",
+        "description": "Secuencias que detienen la generación cuando aparecen."
+      }
+    },
+    "lifecycle": {
+      "keep_alive": {
+        "type": "duration",
+        "description": "Tiempo que Ollama mantiene el modelo cargado después de la petición.",
+        "auto_recommend": true
+      }
+    }
+  }
+}
